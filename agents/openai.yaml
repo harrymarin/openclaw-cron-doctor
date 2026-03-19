@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw Cron Doctor"
+  short_description: "Auto-fix and verify OpenClaw cron scheduling and isolated execution"
+  default_prompt: "Use OpenClaw Cron Doctor to automatically repair local OpenClaw cron issues, fix the common gateway/model pitfalls, and verify the result with a real silent smoke cron."
