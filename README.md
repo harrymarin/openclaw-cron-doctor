@@ -29,12 +29,17 @@
 
 1. 把仓库拷到本地，或者下载 release zip 解压。
 2. 把 skill 放到 `~/.codex/skills/openclaw-cron-doctor`。
-3. 运行安装脚本修复本机。
-4. 运行验证脚本确认 cron 真的能执行。
+3. 按你的平台运行安装脚本修复本机。
+4. 运行对应平台的验证脚本确认 cron 真的能执行。
 
 ```bash
 bash scripts/install.sh
 bash scripts/verify.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
 ## 安装
@@ -46,6 +51,12 @@ cp -R openclaw-cron-doctor ~/.codex/skills/openclaw-cron-doctor
 ```
 
 如果你是从 release zip 安装，解压后保持目录名为 `openclaw-cron-doctor/` 即可。
+
+Windows 用户直接运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+```
 
 ## 使用示例
 
@@ -59,6 +70,12 @@ bash scripts/install.sh
 
 ```bash
 bash scripts/verify.sh
+```
+
+Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
 成功时你会看到类似输出：
@@ -80,7 +97,7 @@ CRON_SMOKE_OK 2026-03-19T12:37:00Z
 1. 扫描 `~/.openclaw`、`~/.qclaw`、`~/.openclaw-peer`
 2. 修补 `openclaw.json` 里的默认模型和回退模型
 3. 把更稳的 cron 规则写进工作区 `TOOLS.md` / `AGENTS.md`
-4. 识别已知端口冲突并重启标准 gateway
+4. 在 macOS / Windows 上用对应方式识别已知端口冲突
 5. 创建静默 one-shot cron，验证“调度 + 隔离执行 + 结果落地”完整链路
 6. 如果 `deleteAfterRun` 状态刷新慢，自动清理 stale job
 
@@ -97,7 +114,10 @@ CRON_SMOKE_OK 2026-03-19T12:37:00Z
 └── scripts/
     ├── configure-openclaw.mjs
     ├── install.sh
+    ├── install.ps1
+    ├── repair-runtime.mjs
     └── verify.sh
+    └── verify.ps1
 ```
 
 ## License

@@ -20,31 +20,46 @@ This skill is for automatic repair first, verification second. Use it when the u
 
 ## Quick Start
 
-Install and repair:
+Install and repair on macOS/Linux:
 
 ```bash
 bash scripts/install.sh
 ```
 
-Verify with a real smoke job:
+Install and repair on Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+```
+
+Verify with a real smoke job on macOS/Linux:
 
 ```bash
 bash scripts/verify.sh
+```
+
+Verify on Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
 ## Workflow
 
 1. Patch all detected OpenClaw roots with safer cron defaults.
 2. Update workspace guidance files so future agent behavior matches the repaired runtime.
-3. Detect a local app occupying the primary gateway port and politely quit it when it matches the known conflict pattern.
-4. Restart the OpenClaw gateway when launchd exposes the standard `ai.openclaw.gateway` service.
+3. Detect a local app occupying the primary gateway port and politely stop it when it matches the known conflict pattern on the current platform.
+4. Restart the OpenClaw gateway and node host through the cross-platform OpenClaw CLI service commands.
 5. Run a silent one-shot isolated cron job that writes a local marker file and auto-deletes after success.
 
 ## Files
 
 - `scripts/install.sh`: idempotent repair entrypoint
+- `scripts/install.ps1`: Windows repair entrypoint
 - `scripts/verify.sh`: runtime smoke test
+- `scripts/verify.ps1`: Windows runtime smoke test
 - `scripts/configure-openclaw.mjs`: safe config and workspace patcher
+- `scripts/repair-runtime.mjs`: cross-platform runtime repair helper
 - `references/runtime-notes.md`: what the repair changes
 - `references/troubleshooting.md`: what to check when verification still fails
 

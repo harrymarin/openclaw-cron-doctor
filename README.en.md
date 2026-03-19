@@ -29,12 +29,17 @@ Auto-fix and verify the most common local causes behind "OpenClaw cron does not 
 
 1. Clone the repo or download the release zip.
 2. Put the skill under `~/.codex/skills/openclaw-cron-doctor`.
-3. Run the installer to repair the local machine.
-4. Run the verifier to prove cron really executes.
+3. Run the installer for your platform.
+4. Run the matching verifier to prove cron really executes.
 
 ```bash
 bash scripts/install.sh
 bash scripts/verify.sh
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
 ## Installation
@@ -46,6 +51,12 @@ cp -R openclaw-cron-doctor ~/.codex/skills/openclaw-cron-doctor
 ```
 
 If you install from the release zip, keep the extracted folder name as `openclaw-cron-doctor/`.
+
+Windows users can run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install.ps1
+```
 
 ## Usage Example
 
@@ -59,6 +70,12 @@ Run a real silent one-shot isolated cron smoke test:
 
 ```bash
 bash scripts/verify.sh
+```
+
+Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
 Typical success output:
@@ -80,7 +97,7 @@ CRON_SMOKE_OK 2026-03-19T12:37:00Z
 1. scans `~/.openclaw`, `~/.qclaw`, and `~/.openclaw-peer`
 2. patches safer primary and fallback models in `openclaw.json`
 3. writes stronger cron guidance into workspace `TOOLS.md` and `AGENTS.md`
-4. detects the known local port-conflict pattern and restarts the standard gateway
+4. detects the known local port-conflict pattern on macOS and Windows
 5. creates a silent one-shot cron to verify scheduling, isolated execution, and result delivery
 6. cleans up a stale cron entry if `deleteAfterRun` state refresh lags
 
@@ -97,7 +114,10 @@ CRON_SMOKE_OK 2026-03-19T12:37:00Z
 └── scripts/
     ├── configure-openclaw.mjs
     ├── install.sh
+    ├── install.ps1
+    ├── repair-runtime.mjs
     └── verify.sh
+    └── verify.ps1
 ```
 
 ## License

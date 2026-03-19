@@ -6,7 +6,7 @@
 
 - confirm the process listening on the OpenClaw gateway port is actually the OpenClaw gateway
 - check whether another GUI app is occupying the same port
-- restart the launchd service if `ai.openclaw.gateway` exists
+- restart the gateway through `openclaw gateway restart`
 
 ### Cron starts but session errors
 
@@ -21,3 +21,9 @@
 ### Plugins warn during checks
 
 Non-fatal plugin warnings do not block cron verification unless they crash the gateway or break model execution.
+
+### Windows users cannot run the shell scripts
+
+- use `scripts/install.ps1` instead of `scripts/install.sh`
+- use `scripts/verify.ps1` instead of `scripts/verify.sh`
+- if service restart still fails, check `openclaw gateway status` and `openclaw node status`
