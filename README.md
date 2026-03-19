@@ -1,60 +1,103 @@
+[![中文](https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0F172A?style=flat-square)](./README.md)
+[![English](https://img.shields.io/badge/README-English-E5E7EB?style=flat-square&logoColor=111827)](./README.en.md)
+[![Install](https://img.shields.io/badge/Install-Codex%20Skill-2563EB?style=flat-square)](#安装)
+[![Structure](https://img.shields.io/badge/Docs-目录结构-0891B2?style=flat-square)](#目录结构)
+[![Release](https://img.shields.io/github/v/release/harrymarin/openclaw-cron-doctor?style=flat-square)](https://github.com/harrymarin/openclaw-cron-doctor/releases)
+[![License](https://img.shields.io/github/license/harrymarin/openclaw-cron-doctor?style=flat-square)](./LICENSE)
+
 # OpenClaw Cron Doctor
 
-Auto-fix and verify the most common local causes behind "OpenClaw cron does not trigger".
+一键修复并验证 OpenClaw 定时任务“不触发”的常见本地问题。
 
-## What It Fixes
+## 快速导航
 
-- missing cron guidance in workspace `TOOLS.md` and `AGENTS.md`
-- gateway port conflicts caused by another local app occupying the OpenClaw port
-- weak default model selection that makes isolated cron runs fail after scheduling
-- false positives where cron schedules correctly but execution silently fails
+- [它解决什么](#它解决什么)
+- [快速开始](#快速开始)
+- [安装](#安装)
+- [使用示例](#使用示例)
+- [运行规则](#运行规则)
+- [目录结构](#目录结构)
 
-## What It Does
+## 它解决什么
 
-1. Patches detected OpenClaw roots such as `~/.openclaw`, `~/.qclaw`, and `~/.openclaw-peer`
-2. Writes safer cron guidance into workspace docs
-3. Detects the common local GUI port-conflict pattern and restarts the standard launchd gateway
-4. Runs a real silent one-shot isolated cron smoke test
-5. Cleans up a stale cron entry if the job executed but `deleteAfterRun` state refresh lags
+- 工作区缺少 cron 约定，导致 agent 行为持续配错
+- 本地 GUI 应用抢占 OpenClaw gateway 端口
+- 默认模型不可用，导致 cron 明明调度了却执行失败
+- cron 实际执行了，但因为本地状态刷新或日志噪音，看起来像“没触发”
 
-## Install
+## 快速开始
 
-Copy this folder into your Codex skills directory:
+1. 把仓库拷到本地，或者下载 release zip 解压。
+2. 把 skill 放到 `~/.codex/skills/openclaw-cron-doctor`。
+3. 运行安装脚本修复本机。
+4. 运行验证脚本确认 cron 真的能执行。
 
 ```bash
-cp -R openclaw-cron-doctor-release ~/.codex/skills/openclaw-cron-doctor
+bash scripts/install.sh
+bash scripts/verify.sh
 ```
 
-Or keep the repo checked out anywhere and run the scripts directly.
+## 安装
 
-## Usage
+把本仓库复制到 Codex skills 目录：
 
-Repair and patch the local machine:
+```bash
+cp -R openclaw-cron-doctor ~/.codex/skills/openclaw-cron-doctor
+```
+
+如果你是从 release zip 安装，解压后保持目录名为 `openclaw-cron-doctor/` 即可。
+
+## 使用示例
+
+修复当前机器上的 OpenClaw / QClaw / peer 运行态：
 
 ```bash
 bash scripts/install.sh
 ```
 
-Verify with a real cron smoke job:
+挂一个真实的 one-shot isolated cron 做 smoke test：
 
 ```bash
 bash scripts/verify.sh
 ```
 
-## Notes
+成功时你会看到类似输出：
 
-- This skill does not treat `timeoutSeconds=604800` as a magic fix.
-- It prefers `agentTurn + isolated` for cron and expects the task body to return results directly instead of proactively calling `message`.
-- It treats heartbeat as the better tool for lightweight polling or tasks that depend on main-session context.
+```text
+Smoke verification succeeded.
+CRON_SMOKE_OK 2026-03-19T12:37:00Z
+```
 
-## Repository Layout
+## 运行规则
+
+- cron 默认使用 `agentTurn + isolated`
+- cron 任务体直接输出结果，不主动调 `message`
+- 需要主会话上下文或轻量轮询时优先用 heartbeat
+- 不把 `timeoutSeconds=604800` 当成通用修复公式
+
+## 它具体做了什么
+
+1. 扫描 `~/.openclaw`、`~/.qclaw`、`~/.openclaw-peer`
+2. 修补 `openclaw.json` 里的默认模型和回退模型
+3. 把更稳的 cron 规则写进工作区 `TOOLS.md` / `AGENTS.md`
+4. 识别已知端口冲突并重启标准 gateway
+5. 创建静默 one-shot cron，验证“调度 + 隔离执行 + 结果落地”完整链路
+6. 如果 `deleteAfterRun` 状态刷新慢，自动清理 stale job
+
+## 目录结构
 
 ```text
 .
 ├── SKILL.md
 ├── agents/
+│   └── openai.yaml
 ├── references/
+│   ├── runtime-notes.md
+│   └── troubleshooting.md
 └── scripts/
+    ├── configure-openclaw.mjs
+    ├── install.sh
+    └── verify.sh
 ```
 
 ## License
